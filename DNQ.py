@@ -265,7 +265,7 @@ class Agent(Circle):
             self.train_network()
 
     def run(self):
-        print('input \'stop\' to end the procedre and save model and log')
+        print('input \'stop\' to end the procedure and save model and log')
         assert(self.model_flag or self.train_flag)
         self.open_log()
         if self.model_flag:
@@ -316,9 +316,9 @@ barrier = Circle(80, [0,0], (0.95, 0.8, 0.8))
 
 load_model = True
 Train = False
-Player_mode = True
+Player_mode = False
 alpha = 0.01
 initial_epsilon = 0.2
-beta = 0.9
-agent = Agent(10, [30, 80], 'blue', target, barrier, initial_epsilon, alpha, beta, Train, load_model, Player_mode)
+gamma = 0.9
+agent = Agent(10, [30, 80], 'blue', target, barrier, initial_epsilon, alpha, gamma, Train, load_model, Player_mode)
 agent.run()
