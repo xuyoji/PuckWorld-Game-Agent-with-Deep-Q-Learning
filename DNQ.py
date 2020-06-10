@@ -1,3 +1,5 @@
+#write by Allen Xu 2020.6
+
 import numpy as np
 import random
 import turtle
@@ -82,7 +84,7 @@ class neuralNetwork(nn.Module):
 
 
 class Agent(Circle):
-    def __init__(self, r, center, color, target, barrier, epsilon, alpha, gamma, train_flag=True, load_model=True):
+    def __init__(self, r, center, color, target, barrier, epsilon, alpha, gamma, train_flag=True, load_model=True, player_mode=False):
         super().__init__(r, center, color)
         self.v = [0, 0]
         self.target = target
@@ -102,6 +104,13 @@ class Agent(Circle):
         self.train_flag = train_flag
         self.model_flag = load_model
         self.seq = '→↑←↓'
+        self.player_mode = player_mode
+        if player_mode:
+            turtle.onkeypress(lambda: self.adjust_v(1), "w")
+            turtle.onkeypress(lambda: self.adjust_v(3), "s")
+            turtle.onkeypress(lambda: self.adjust_v(2), "a")
+            turtle.onkeypress(lambda: self.adjust_v(0), "d")
+            turtle.listen()
 
     def draw(self, r):
         ratio = (r*15 + 1) /2
@@ -130,7 +139,7 @@ class Agent(Circle):
         return (r1+r2)/30
     
     def load_model(self):
-        self.model.load_state_dict(torch.load('./network30000.pth'))
+        self.model.load_state_dict(torch.load('trained_network.pth'))
 
     def open_log(self):
         self.file = open('./reward.log', 'w')
@@ -224,14 +233,15 @@ class Agent(Circle):
         self.a = self.generate_action(self.state)
         if (self.round % 32==0):
             self.file.write(str(self.avg_r)+'\n')
-            print(self.avg_r)
+            #print(self.avg_r)
         if (self.train_flag and self.round % 5000 ==0):
             torch.save(self.model.state_dict(), './network'+str(self.round)+'.pth')
 
     def step(self):
         r = self.get_reward()
         #print(a)
-        self.adjust_v(self.a)
+        if not self.player_mode:
+            self.adjust_v(self.a)
         self.move(self.v)
         self.barrier.follow(self)
         turtle.clear()
@@ -255,6 +265,7 @@ class Agent(Circle):
             self.train_network()
 
     def run(self):
+        print('input \'stop\' to end the procedre and save model and log')
         assert(self.model_flag or self.train_flag)
         self.open_log()
         if self.model_flag:
@@ -305,5 +316,9 @@ barrier = Circle(80, [0,0], (0.95, 0.8, 0.8))
 
 load_model = True
 Train = False
-agent = Agent(10, [30, 80], 'blue', target, barrier, 0.2, 0.01, 0.9, Train, load_model)
+Player_mode = True
+alpha = 0.01
+initial_epsilon = 0.2
+beta = 0.9
+agent = Agent(10, [30, 80], 'blue', target, barrier, initial_epsilon, alpha, beta, Train, load_model, Player_mode)
 agent.run()
