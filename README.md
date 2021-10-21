@@ -2,7 +2,7 @@
 
 ![](./UI.gif)
 
-This is a python reproduce of [this](https://cs.stanford.edu/people/karpathy/reinforcejs/puckworld.html) js implement of PuckWorld game Agent.
+<!-- This is a python reproduce of [this](https://cs.stanford.edu/people/karpathy/reinforcejs/puckworld.html) js implement of PuckWorld game Agent.-->
 
 python3 and pytorch are required.
 
